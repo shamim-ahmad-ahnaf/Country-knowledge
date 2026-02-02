@@ -1,0 +1,7 @@
+{
+  "name": "Sonar Bangla Explorer",
+  "description": "An advanced interactive platform to explore everything about Bangladesh - its rich history, culture, and facts powered by Gemini AI with real-time grounding.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
