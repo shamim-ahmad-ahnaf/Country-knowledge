@@ -1,5 +1,133 @@
-<!DOCTYPE html> <html lang="bn" style="scroll-behavior: smooth;"> 
-  <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width,
-                                  initial-scale=1.0"> <title>দেশজ্ঞান | হেরিটেজ এনসাইক্লোপিডিয়া</title> 
-    <script src="https://cdn.tailwindcss.com"></script> <link rel="preconnect" href="https://fonts.googleapis.com"> <li
-                                                                                                                      nk rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Noto+Serif+Bengali:wght@100..900&display=swap" rel="stylesheet"> <script> tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'bd-green': '#006a4e', 'bd-red': '#f42a41', 'gold': '#ffcc00', }, fontFamily: { 'noto': ['"Noto Serif Bengali"', 'serif'], 'hind': ['"Hind Siliguri"', 'sans-serif'], 'playfair': ['"Playfair Display"', 'serif'], }, animation: { 'slow-zoom': 'slow-zoom 20s infinite alternate', 'float': 'float 6s ease-in-out infinite', 'shimmer': 'shimmer 2.5s infinite linear', 'reveal-stagger': 'reveal-stagger 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards', }, keyframes: { 'slow-zoom': { 'from': { transform: 'scale(1)' }, 'to': { transform: 'scale(1.1)' }, }, 'float': { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-20px)' }, }, 'shimmer': { '0%': { backgroundPosition: '-1000px 0' }, '100%': { backgroundPosition: '1000px 0' }, }, 'reveal-stagger': { '0%': { opacity: '0', transform: 'translateY(40px)' }, '100%': { opacity: '1', transform: 'translateY(0)' }, } } } } } </script> <style> :root { --bg-body: #fafafa; --bg-card: #ffffff; --text-main: #1a1a1a; --text-muted: #4b5563; /* Adjusted for better contrast */ --border-subtle: rgba(0, 0, 0, 0.05); --glass-base: rgba(255, 255, 255, 0.85); --shimmer-grad: linear-gradient(to right, #f6f7f8 8%, #edeef1 18%, #f6f7f8 33%); } .dark { --bg-body: #080808; --bg-card: #121212; --text-main: #f3f4f6; --text-muted: #9ca3af; --border-subtle: rgba(255, 255, 255, 0.08); --glass-base: rgba(10, 10, 10, 0.85); --shimmer-grad: linear-gradient(to right, #1a1a1a 8%, #2a2a2a 18%, #1a1a1a 33%); } body { font-family: 'Hind Siliguri', sans-serif; background-color: var(--bg-body); color: var(--text-main); transition: background-color 0.3s ease, color 0.3s ease; overflow-x: hidden; } /* Focus Styles */ :focus-visible { outline: 3px solid #ffcc00; outline-offset: 4px; border-radius: 4px; } .hero-pattern { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23006a4e' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6zM36 4V0h-2v4h-4v2h4v4h2V6h4V4h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); } .glass { background: var(--glass-base); backdrop-filter: blur(12px); border: 1px solid var(--border-subtle); } .gradient-text { background: linear-gradient(135deg, #006a4e 0%, #f42a41 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; } .animate-float { animation: float 6s ease-in-out infinite; } .stream-chunk { animation: fadeInBlur 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; } @keyframes fadeInBlur { from { opacity: 0; transform: translateY(15px); filter: blur(4px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } } .shimmer-box { background: var(--shimmer-grad); background-size: 1000px 100%; } /* Skip Link */ .skip-link { position: absolute; top: -100px; left: 0; background: #006a4e; color: white; padding: 1rem 2rem; z-index: 9999; transition: top 0.3s; font-weight: bold; } .skip-link:focus { top: 0; } /* Screen Reader Only */ .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; } /* Utility for theming elements */ .themed-card { background-color: var(--bg-card); border-color: var(--border-subtle); } .themed-text { color: var(--text-main); } .themed-text-muted { color: var(--text-muted); } .reveal-item { opacity: 0; transform: translateY(40px); } .reveal-item.active { animation: reveal-stagger 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; } </style> <script type="importmap"> { "imports": { "react": "https://esm.sh/react@^19.2.4", "react-dom/": "https://esm.sh/react-dom@^19.2.4/", "react/": "https://esm.sh/react@^19.2.4/", "@google/genai": "https://esm.sh/@google/genai@^1.39.0" } } </script> </head> <body class="hero-pattern"> <a href="#main-content" class="skip-link">মূল বিষয়বস্তুতে যান (Skip to Main Content)</a> <div id="root"></div> </body> </html>
+
+<!DOCTYPE html>
+<html lang="bn" style="scroll-behavior: smooth;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>দেশজ্ঞান | হেরিটেজ এনসাইক্লোপিডিয়া</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Noto+Serif+Bengali:wght@100..900&display=swap" rel="stylesheet">
+    <script>
+        // Shim for process.env to avoid ReferenceErrors in the browser environment
+        window.process = { env: { API_KEY: "" } };
+        
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'bd-green': '#006a4e',
+                        'bd-red': '#f42a41',
+                        'gold': '#ffcc00',
+                    },
+                    fontFamily: {
+                        'noto': ['"Noto Serif Bengali"', 'serif'],
+                        'hind': ['"Hind Siliguri"', 'sans-serif'],
+                        'playfair': ['"Playfair Display"', 'serif'],
+                    },
+                    animation: {
+                        'slow-zoom': 'slow-zoom 20s infinite alternate',
+                        'float': 'float 6s ease-in-out infinite',
+                        'shimmer': 'shimmer 2.5s infinite linear',
+                        'reveal-stagger': 'reveal-stagger 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards',
+                    },
+                    keyframes: {
+                        'slow-zoom': {
+                            'from': { transform: 'scale(1)' },
+                            'to': { transform: 'scale(1.1)' },
+                        },
+                        'float': {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        'shimmer': {
+                            '0%': { backgroundPosition: '-1000px 0' },
+                            '100%': { backgroundPosition: '1000px 0' },
+                        },
+                        'reveal-stagger': {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg-body: #fafafa;
+            --bg-card: #ffffff;
+            --text-main: #1a1a1a;
+            --text-muted: #4b5563;
+            --border-subtle: rgba(0, 0, 0, 0.05);
+            --glass-base: rgba(255, 255, 255, 0.85);
+            --shimmer-grad: linear-gradient(to right, #f6f7f8 8%, #edeef1 18%, #f6f7f8 33%);
+        }
+
+        .dark {
+            --bg-body: #080808;
+            --bg-card: #121212;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --glass-base: rgba(10, 10, 10, 0.85);
+            --shimmer-grad: linear-gradient(to right, #1a1a1a 8%, #2a2a2a 18%, #1a1a1a 33%);
+        }
+
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        .hero-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23006a4e' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6zM36 4V0h-2v4h-4v2h4v4h2V6h4V4h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .glass {
+            background: var(--glass-base);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #006a4e 0%, #f42a41 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .shimmer-box {
+            background: var(--shimmer-grad);
+            background-size: 1000px 100%;
+        }
+
+        .themed-card {
+            background-color: var(--bg-card);
+            border-color: var(--border-subtle);
+        }
+        
+        .themed-text { color: var(--text-main); }
+        .themed-text-muted { color: var(--text-muted); }
+    </style>
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@^19.2.4",
+        "react-dom": "https://esm.sh/react-dom@^19.2.4",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+        "react/": "https://esm.sh/react@^19.2.4/",
+        "@google/genai": "https://esm.sh/@google/genai@^1.39.0"
+      }
+    }
+    </script>
+</head>
+<body class="hero-pattern">
+    <a href="#main-content" class="skip-link sr-only focus:not-sr-only">মূল বিষয়বস্তুতে যান</a>
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+</body>
+</html>
