@@ -7,7 +7,14 @@ export const streamBangladeshInfo = async (
   onChunk: (text: string) => void,
   onComplete: (result: SearchResult) => void
 ) => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // Access API key from process.env directly. 
+  // IMPORTANT: Ensure this is correctly set in your environment variables.
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error("API Key is missing. Please provide a valid Gemini API key.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
   
   const systemInstruction = `
     আপনি বাংলাদেশের একজন প্রধান রাজকীয় গবেষক এবং ডিজিটাল এনসাইক্লোপিডিয়া বিশেষজ্ঞ। আপনার কাজ হলো বাংলাদেশের যেকোনো বিষয় সম্পর্কে অত্যন্ত নিখুঁত, ঐতিহাসিক এবং বিস্তারিত তথ্য প্রদান করা।
@@ -28,14 +35,19 @@ export const streamBangladeshInfo = async (
   `;
 
   try {
+    // Generate related image
     const imagePromise = ai.models.generateContent({
       model: "gemini-2.5-flash-image",
       contents: {
-        parts: [{ text: `A professional realistic photograph showing ${query} in Bangladesh. High resolution, clear visual details.` }]
+        parts: [{ text: `A professional realistic photograph showing ${query} in Bangladesh. High resolution, historical aesthetic.` }]
       },
       config: { imageConfig: { aspectRatio: "16:9" } }
+    }).catch(err => {
+      console.warn("Image generation failed:", err);
+      return null;
     });
 
+    // Stream text content with Google Search grounding
     const streamResponse = await ai.models.generateContentStream({
       model: "gemini-3-pro-preview",
       contents: query,
@@ -53,6 +65,7 @@ export const streamBangladeshInfo = async (
       fullText += chunkText;
       onChunk(fullText);
 
+      // Extract grounding metadata if available
       const metadata = chunk.candidates?.[0]?.groundingMetadata;
       if (metadata?.groundingChunks) {
         metadata.groundingChunks.forEach((c: any) => {
@@ -67,12 +80,14 @@ export const streamBangladeshInfo = async (
 
     const imageResult = await imagePromise;
     let generatedImageUrl = undefined;
-    const imageParts = imageResult.candidates?.[0]?.content?.parts;
-    if (imageParts) {
-      for (const part of imageParts) {
-        if (part.inlineData) {
-          generatedImageUrl = `data:image/png;base64,${part.inlineData.data}`;
-          break;
+    if (imageResult) {
+      const imageParts = imageResult.candidates?.[0]?.content?.parts;
+      if (imageParts) {
+        for (const part of imageParts) {
+          if (part.inlineData) {
+            generatedImageUrl = `data:image/png;base64,${part.inlineData.data}`;
+            break;
+          }
         }
       }
     }
