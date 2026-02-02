@@ -7,50 +7,42 @@ export const streamBangladeshInfo = async (
   onChunk: (text: string) => void,
   onComplete: (result: SearchResult) => void
 ) => {
-  // Access API key from process.env directly. 
-  // IMPORTANT: Ensure this is correctly set in your environment variables.
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error("API Key is missing. Please provide a valid Gemini API key.");
-  }
-
-  const ai = new GoogleGenAI({ apiKey });
+  // Use the API key directly from process.env as per guidelines
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const systemInstruction = `
-    আপনি বাংলাদেশের একজন প্রধান রাজকীয় গবেষক এবং ডিজিটাল এনসাইক্লোপিডিয়া বিশেষজ্ঞ। আপনার কাজ হলো বাংলাদেশের যেকোনো বিষয় সম্পর্কে অত্যন্ত নিখুঁত, ঐতিহাসিক এবং বিস্তারিত তথ্য প্রদান করা।
+    আপনি বাংলাদেশের একজন বিশেষজ্ঞ গবেষক। আপনার কাজ হলো বাংলাদেশের যেকোনো বিষয় সম্পর্কে নিখুঁত, ঐতিহাসিক এবং বিস্তারিত তথ্য প্রদান করা।
     
-    কনটেন্ট গাইডলাইন:
-    ১. প্রতিটি উত্তরের শুরুতেই সেই বিষয়ের একটি গভীর ঐতিহাসিক প্রেক্ষাপট (Deep History) থাকতে হবে।
-    ২. উত্তরটি অবশ্যই মার্জিত এবং প্রফেশনাল বাংলা ভাষায় হতে হবে।
-    ৩. তথ্যগুলো সংক্ষিপ্ত কিন্তু ইনফরমেটিভ হবে।
-    ৪. প্রতিটি সেকশনের জন্য অবশ্যই সাব-হেডিং (Sub-headings) ব্যবহার করবেন।
-    ৫. উত্তরটি এমনভাবে সাজান যেন এটি একটি আধুনিক ডিজিটাল এনসাইক্লোপিডিয়ার মতো মনে হয়।
-    ৬. যদি কোনো তালিকা (List) থাকে তবে তা বুলেট পয়েন্ট বা টেবিল আকারে দেখান।
+    নির্দেশনা:
+    ১. উত্তরের শুরুতে বিষয়টির গভীর ঐতিহাসিক প্রেক্ষাপট থাকতে হবে।
+    ২. প্রফেশনাল বাংলা ভাষা ব্যবহার করুন।
+    ৩. তথ্যবহুল কিন্তু পড়ার উপযোগী সাব-হেডিং ব্যবহার করুন।
+    ৪. তালিকা থাকলে বুলেট পয়েন্ট ব্যবহার করুন।
     
     কাঠামো:
     - ঐতিহাসিক ভূমিকা
-    - বিস্তারিত তথ্য (সাব-হেডিং সহ)
-    - বর্তমান অবস্থা ও পরিসংখ্যান
+    - মূল তথ্য (সাব-হেডিং সহ)
+    - বর্তমান পরিস্থিতি
     - সারসংক্ষেপ
   `;
 
   try {
-    // Generate related image
+    // Start image generation separately to not block text
     const imagePromise = ai.models.generateContent({
       model: "gemini-2.5-flash-image",
       contents: {
-        parts: [{ text: `A professional realistic photograph showing ${query} in Bangladesh. High resolution, historical aesthetic.` }]
+        parts: [{ text: `A realistic high-quality historical or landmark photograph of ${query} in Bangladesh.` }]
       },
       config: { imageConfig: { aspectRatio: "16:9" } }
     }).catch(err => {
-      console.warn("Image generation failed:", err);
+      console.error("Image generation failed:", err);
       return null;
     });
 
-    // Stream text content with Google Search grounding
+    // Use gemini-3-flash-preview for faster, reliable streaming
     const streamResponse = await ai.models.generateContentStream({
-      model: "gemini-3-pro-preview",
-      contents: query,
+      model: "gemini-3-flash-preview",
+      contents: [{ parts: [{ text: query }] }],
       config: { 
         systemInstruction,
         tools: [{ googleSearch: {} }] 
@@ -61,11 +53,12 @@ export const streamBangladeshInfo = async (
     const groundingSources: GroundingSource[] = [];
 
     for await (const chunk of streamResponse) {
-      const chunkText = chunk.text || "";
-      fullText += chunkText;
-      onChunk(fullText);
+      if (chunk.text) {
+        fullText += chunk.text;
+        onChunk(fullText);
+      }
 
-      // Extract grounding metadata if available
+      // Handle grounding metadata
       const metadata = chunk.candidates?.[0]?.groundingMetadata;
       if (metadata?.groundingChunks) {
         metadata.groundingChunks.forEach((c: any) => {
@@ -78,17 +71,13 @@ export const streamBangladeshInfo = async (
       }
     }
 
+    // Wait for image if it's still generating, but with a timeout or handled failure
     const imageResult = await imagePromise;
     let generatedImageUrl = undefined;
     if (imageResult) {
-      const imageParts = imageResult.candidates?.[0]?.content?.parts;
-      if (imageParts) {
-        for (const part of imageParts) {
-          if (part.inlineData) {
-            generatedImageUrl = `data:image/png;base64,${part.inlineData.data}`;
-            break;
-          }
-        }
+      const part = imageResult.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+      if (part?.inlineData) {
+        generatedImageUrl = `data:image/png;base64,${part.inlineData.data}`;
       }
     }
 
@@ -99,7 +88,7 @@ export const streamBangladeshInfo = async (
     });
 
   } catch (error) {
-    console.error("Stream Error:", error);
+    console.error("Gemini Service Error:", error);
     throw error;
   }
 };
