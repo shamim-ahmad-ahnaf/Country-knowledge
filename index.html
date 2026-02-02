@@ -10,9 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Noto+Serif+Bengali:wght@100..900&display=swap" rel="stylesheet">
     <script>
-        // Provide a minimal process shim for browser environment without overwriting injected keys
-        window.process = window.process || { env: {} };
-        
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -94,12 +91,6 @@
             border: 1px solid var(--border-subtle);
         }
 
-        .gradient-text {
-            background: linear-gradient(135deg, #006a4e 0%, #f42a41 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
         .shimmer-box {
             background: var(--shimmer-grad);
             background-size: 1000px 100%;
@@ -109,25 +100,21 @@
             background-color: var(--bg-card);
             border-color: var(--border-subtle);
         }
-        
-        .themed-text { color: var(--text-main); }
-        .themed-text-muted { color: var(--text-muted); }
     </style>
     <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.4",
-    "react-dom": "https://esm.sh/react-dom@^19.2.4",
-    "react-dom/client": "https://esm.sh/react-dom@^19.2.4/client",
-    "@google/genai": "https://esm.sh/@google/genai@^1.39.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/"
-  }
-}
-</script>
+    {
+      "imports": {
+        "react": "https://esm.sh/react@^19.2.4",
+        "react-dom": "https://esm.sh/react-dom@^19.2.4",
+        "react-dom/client": "https://esm.sh/react-dom@^19.2.4/client",
+        "@google/genai": "https://esm.sh/@google/genai@^1.39.0",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+        "react/": "https://esm.sh/react@^19.2.4/"
+      }
+    }
+    </script>
 </head>
 <body class="hero-pattern">
-    <a href="#main-content" class="skip-link sr-only focus:not-sr-only">মূল বিষয়বস্তুতে যান</a>
     <div id="root"></div>
     <script type="module" src="./index.tsx"></script>
 </body>
