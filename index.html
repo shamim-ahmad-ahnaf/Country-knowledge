@@ -190,4 +190,24 @@
     <a href="#main-content" class="skip-link">মূল বিষয়বস্তুতে যান (Skip to Main Content)</a>
     <div id="root"></div>
 </body>
+    <script type="module">
+  import React from "react";
+  import { createRoot } from "react-dom/client";
+
+  function App() {
+    return (
+      <main id="main-content" class="p-10 text-center">
+        <h1 class="text-4xl font-bold gradient-text">
+          দেশজ্ঞান
+        </h1>
+        <p class="mt-4 themed-text-muted">
+          হেরিটেজ এনসাইক্লোপিডিয়া
+        </p>
+      </main>
+    );
+  }
+
+  createRoot(document.getElementById("root")).render(<App />);
+</script>
+
 </html>
