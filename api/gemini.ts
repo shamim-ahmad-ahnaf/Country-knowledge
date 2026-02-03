@@ -1,20 +1,27 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-export const dynamic = 'force-dynamic';
+export const config = {
+  runtime: 'nodejs',
+};
 
-export async function POST(req: Request) {
+export default async function handler(req: any, res: any) {
+  // Handle POST requests only
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
   try {
-    const { query } = await req.json();
+    const { query } = req.body;
 
     if (!query) {
-      return new Response(JSON.stringify({ error: "Query is required" }), { status: 400 });
+      return res.status(400).json({ error: "অনুসন্ধানের বিষয় (Query) প্রয়োজন।" });
     }
 
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
       console.error("API_KEY is missing in server environment variables.");
-      return new Response(JSON.stringify({ error: "Server configuration error: API Key missing." }), { status: 500 });
+      return res.status(500).json({ error: "সার্ভার কনফিগারেশনে সমস্যা: API Key পাওয়া যায়নি। ভিercel সেটিংস চেক করুন।" });
     }
 
     const ai = new GoogleGenAI({ apiKey });
@@ -26,8 +33,6 @@ export async function POST(req: Request) {
       Markdown ব্যবহার করে সুন্দরভাবে সাজিয়ে লিখুন।
     `;
 
-    // We use generateContent here for a simpler JSON response as requested, 
-    // but the SDK is initialized on the server.
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: [{ parts: [{ text: `বাংলাদেশ সম্পর্কে বিস্তারিত তথ্য দাও: ${query}` }] }],
@@ -38,21 +43,19 @@ export async function POST(req: Request) {
       },
     });
 
-    const text = response.text;
+    const text = response.text || "কোনো তথ্য পাওয়া যায়নি।";
     const groundingMetadata = response.candidates?.[0]?.groundingMetadata;
     const sources = groundingMetadata?.groundingChunks?.map((chunk: any) => ({
       title: chunk.web?.title || "Source",
       uri: chunk.web?.uri || "#"
     })).filter((s: any) => s.uri !== "#") || [];
 
-    return new Response(JSON.stringify({ text, sources }), {
-      headers: { "Content-Type": "application/json" },
-    });
+    return res.status(200).json({ text, sources });
 
   } catch (error: any) {
-    console.error("Gemini API Error:", error);
-    return new Response(JSON.stringify({ 
-      error: error.message || "Internal Server Error" 
-    }), { status: 500 });
+    console.error("Gemini Server Error:", error);
+    return res.status(500).json({ 
+      error: `Gemini API এরর: ${error.message || "Internal Server Error"}` 
+    });
   }
 }
