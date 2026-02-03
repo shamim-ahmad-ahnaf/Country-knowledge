@@ -19,12 +19,10 @@ export const streamBangladeshInfo = async (
       body: JSON.stringify({ query }),
     });
 
-    const data = await response.json();
-
-if (!response.ok) {
-  throw new Error(data.error || "সার্ভারে সমস্যা হয়েছে।");
-}
-
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "সার্ভারে সমস্যা হয়েছে।");
+    }
 
     const data = await response.json();
     
@@ -43,3 +41,5 @@ if (!response.ok) {
     throw new Error(error.message || "তথ্য সংগ্রহ করতে ব্যর্থ হয়েছি।");
   }
 };
+
+
