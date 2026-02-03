@@ -24,6 +24,7 @@ import IslamicHistoryGallery from './components/IslamicHistoryGallery';
 import IslamicScholarsGallery from './components/IslamicScholarsGallery';
 import EmergencyServices from './components/EmergencyServices';
 import FAQSection from './components/FAQSection';
+import Logo from './components/Logo';
 
 const App: React.FC = () => {
   const [query, setQuery] = useState('');
@@ -53,7 +54,7 @@ const App: React.FC = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 80);
+    const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -85,7 +86,7 @@ const App: React.FC = () => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const offset = 80;
+      const offset = 60;
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = element.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -133,7 +134,6 @@ const App: React.FC = () => {
         }
       );
     } catch (err: any) {
-      // Show the specific error message to help the user diagnose the problem on Vercel
       setError(err.message || 'তথ্য সংগ্রহে ত্রুটি হয়েছে। পুনরায় চেষ্টা করুন।');
       setStatus(AppStatus.ERROR);
     }
@@ -174,30 +174,29 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col transition-colors duration-300">
       <nav 
-        className={`fixed top-0 w-full z-[300] transition-all duration-500 ${scrolled ? 'glass py-3 shadow-xl border-b border-bd-green/10' : 'bg-transparent py-8'}`}
+        className={`fixed top-0 w-full z-[300] transition-all duration-300 ${scrolled ? 'glass py-1.5 shadow-xl border-b border-bd-green/10' : 'bg-transparent py-3'}`}
         aria-label="মূল নেভিগেশন"
       >
         <div className="container mx-auto px-6 flex justify-between items-center relative z-[320]">
           <button 
             onClick={resetAll} 
-            className="flex items-center gap-4 group focus:ring-4 focus:ring-bd-green/30 rounded-2xl outline-none"
-            aria-label="হোম পেজে ফিরে যান এবং অনুসন্ধান রিসেট করুন"
+            className="flex items-center gap-2 group outline-none"
           >
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-bd-green rounded-2xl flex items-center justify-center text-white font-black text-xl md:text-2xl shadow-lg transition-all group-hover:bg-bd-red group-hover:-rotate-12">🇧🇩</div>
+            <Logo size="sm" />
             <div className="flex flex-col items-start text-left">
-              <span className="text-xl md:text-2xl font-black leading-tight font-noto text-bd-green dark:text-bd-green">দেশজ্ঞান</span>
-              <span className="text-bd-red text-[8px] md:text-[10px] font-black tracking-[0.4em] uppercase">Digital Encyclopedia</span>
+              <span className="text-xl md:text-2xl font-black leading-none font-noto text-bd-green group-hover:text-bd-red transition-colors">দেশজ্ঞান</span>
+              <span className="text-bd-red dark:text-bd-red/80 text-[6px] md:text-[8px] font-black tracking-[0.2em] uppercase opacity-70">Heritage Encyclopedia</span>
             </div>
           </button>
           
-          <div className="flex items-center gap-3 md:gap-6">
+          <div className="flex items-center gap-3 md:gap-5">
             <div className="hidden xl:block">
-              <ul className="flex gap-8 text-[11px] font-black uppercase tracking-[0.2em] themed-text-muted">
+              <ul className="flex gap-5 text-[10px] font-black uppercase tracking-[0.1em] themed-text-muted">
                 {navItems.map((item, i) => (
                   <li key={i}>
                     <button 
                       onClick={() => scrollToSection(item.id)} 
-                      className="hover:text-bd-green transition-colors pb-1 border-b-2 border-transparent hover:border-bd-green focus:text-bd-green focus:border-bd-green outline-none"
+                      className="hover:text-bd-green transition-colors pb-0.5 border-b-2 border-transparent hover:border-bd-green outline-none"
                     >
                       {item.label}
                     </button>
@@ -206,132 +205,90 @@ const App: React.FC = () => {
               </ul>
             </div>
             
-            <button 
-              onClick={toggleDarkMode} 
-              className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl bg-white dark:bg-gray-800 shadow-lg text-lg md:text-xl hover:scale-110 transition-transform focus:ring-4 focus:ring-bd-green/30 outline-none"
-              aria-label={isDarkMode ? "লাইট মোডে পরিবর্তন করুন" : "ডার্ক মোডে পরিবর্তন করুন"}
-            >
+            <button onClick={toggleDarkMode} className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-xl bg-white dark:bg-gray-800 shadow-sm text-sm md:text-base hover:scale-110 transition-transform focus:ring-4 focus:ring-bd-green/20 outline-none">
               {isDarkMode ? '🌞' : '🌙'}
             </button>
 
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="xl:hidden w-10 h-10 md:w-12 md:h-12 flex flex-col items-center justify-center gap-1.5 rounded-2xl bg-bd-green text-white shadow-lg transition-all active:scale-95 focus:ring-4 focus:ring-bd-green/30 outline-none"
-              aria-label={isMenuOpen ? "মেনু বন্ধ করুন" : "মেনু খুলুন"}
-              aria-expanded={isMenuOpen}
-              aria-controls="mobile-menu"
-            >
-              <span className={`w-6 h-0.5 bg-current transition-all transform ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
-              <span className={`w-6 h-0.5 bg-current transition-all ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}></span>
-              <span className={`w-6 h-0.5 bg-current transition-all transform ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="xl:hidden w-8 h-8 md:w-10 md:h-10 flex flex-col items-center justify-center gap-1 rounded-xl bg-bd-green text-white shadow-sm focus:ring-4 focus:ring-bd-green/20 outline-none">
+              <span className={`w-4 h-0.5 bg-current transition-all transform ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+              <span className={`w-4 h-0.5 bg-current transition-all ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}></span>
+              <span className={`w-4 h-0.5 bg-current transition-all transform ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
-      <div 
-        id="mobile-menu"
-        className={`fixed inset-0 z-[250] transition-opacity duration-300 ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
-        aria-hidden={!isMenuOpen}
-      >
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
-        <nav 
-          className={`absolute top-0 right-0 h-full w-[85%] max-w-[400px] bg-white dark:bg-[#0a0a0a] shadow-[ -10px_0_40px_rgba(0,0,0,0.3) ] transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col pt-32 pb-12 px-8 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
-          aria-label="মোবাইল মেনু"
-        >
-          <div className="relative z-10 flex flex-col gap-8">
+      {/* Mobile Menu */}
+      <div id="mobile-menu" className={`fixed inset-0 z-[400] transition-opacity duration-300 ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
+        <nav className={`absolute top-0 right-0 h-full w-[80%] max-w-[340px] bg-white dark:bg-[#0a0a0a] transition-transform duration-500 flex flex-col ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+           <div className="p-6 border-b border-gray-100 dark:border-white/5 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Logo size="sm" />
+                <span className="text-xl font-black font-noto text-bd-green">দেশজ্ঞান</span>
+              </div>
+              <button onClick={() => setIsMenuOpen(false)} className="text-bd-red"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg></button>
+            </div>
+          </div>
+          <div className="flex-grow overflow-y-auto px-6 py-4 flex flex-col gap-2">
             {navItems.map((item, i) => (
-              <button 
-                key={i}
-                onClick={() => scrollToSection(item.id)}
-                className={`text-2xl md:text-3xl font-black text-bd-green dark:text-bd-green font-noto hover:text-bd-red transition-all duration-300 text-left transform focus:text-bd-red outline-none ${isMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-12 opacity-0'}`}
-                style={{ transitionDelay: `${i * 100}ms` }}
-              >
+              <button key={i} onClick={() => scrollToSection(item.id)} className="text-lg font-black text-bd-green dark:text-bd-green font-noto py-2 border-b border-gray-50 dark:border-white/5 text-left outline-none">
                 {item.label}
               </button>
             ))}
-            <div className={`h-1 w-24 bg-bd-red/40 my-4 transition-all duration-700 delay-500 ${isMenuOpen ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0'}`}></div>
-            <button 
-              onClick={resetAll} 
-              className={`text-lg font-black uppercase tracking-[0.3em] themed-text-muted hover:text-bd-green transition-all duration-500 delay-600 text-left outline-none ${isMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-12 opacity-0'}`}>
-              শুরুতে যান
-            </button>
+          </div>
+          <div className="p-4 border-t border-gray-100 dark:border-white/5">
+            <button onClick={resetAll} className="w-full py-3 bg-bd-green text-white rounded-lg font-black uppercase text-[10px] outline-none">শুরুতে ফিরে যান</button>
           </div>
         </nav>
       </div>
 
       <main id="main-content" role="main">
-        {/* Hero Section */}
-        <section id="home" className="relative min-h-[90vh] flex flex-col items-center justify-center pt-32 pb-20 overflow-hidden">
-          <div className="hero-pattern absolute inset-0 z-0 opacity-40 dark:opacity-20" aria-hidden="true"></div>
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-transparent to-white dark:to-[#080808]" aria-hidden="true"></div>
-          
-          <div className="container mx-auto px-6 text-center z-10">
-            <div className="inline-block px-4 py-1.5 mb-8 rounded-full bg-bd-green/10 text-bd-green text-xs font-black uppercase tracking-[0.3em] animate-pulse">বাংলার হাজার বছরের তথ্য ভাণ্ডার</div>
-            <h1 className="text-7xl md:text-8xl lg:text-[135px] font-black text-bd-green dark:text-bd-green mb-8 leading-[1.1] md:leading-[1] font-noto tracking-tighter drop-shadow-sm">
-              শেকড়ের <span className="text-bd-red italic">সন্ধানে</span> <br /> 
-              <span className="gradient-text">দেশজ্ঞানের ময়দানে</span>
+        {/* Hero Section - UPDATED: Reduced paddings for mobile to tighten space */}
+        <section id="home" className="relative min-h-screen md:min-h-[70vh] flex flex-col items-center justify-center pt-20 md:pt-32 pb-8 md:pb-12 overflow-hidden">
+          <div className="hero-pattern absolute inset-0 z-0 opacity-40 dark:opacity-10" aria-hidden="true"></div>
+          <div className="container mx-auto px-6 text-center z-10 flex flex-col items-center justify-center h-full">
+            <div className="inline-block px-3 py-0.5 mb-4 md:mb-6 rounded-full bg-bd-green/10 text-bd-green text-[9px] font-black uppercase tracking-[0.2em] animate-reveal-stagger">বাংলার হাজার বছরের তথ্য ভাণ্ডার</div>
+            <h1 className="text-5xl md:text-9xl lg:text-[100px] font-black leading-[1.2] md:leading-[1.1] font-noto tracking-tighter mb-4 md:mb-3 animate-reveal-stagger">
+              <span className="text-bd-green">শেকড়ের</span> <span className="text-bd-red italic">সন্ধানে</span> <br /> 
+              <span className="text-bd-green">দেশজ্ঞানের</span> <span className="text-bd-red">ময়দানে</span>
             </h1>
-            <p className="text-lg md:text-3xl themed-text-muted mb-12 md:mb-20 max-w-5xl mx-auto font-medium leading-relaxed font-noto">ইতিহাস, ঐতিহ্য, পর্যটন থেকে শুরু করে ডিজিটাল বাংলাদেশ — <br className="hidden md:block"/> সবকিছুই এখন আপনার হাতের মুঠোয়।</p>
-            
-            <div className="max-w-5xl mx-auto relative group">
-              <div className="absolute inset-0 bg-bd-green/20 blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 -z-10"></div>
-              <div className="relative themed-card p-2 md:p-4 rounded-[30px] md:rounded-[60px] shadow-[0_40px_120px_-20px_rgba(0,106,78,0.25)] dark:shadow-[0_40px_120px_-20px_rgba(0,0,0,0.6)] overflow-hidden flex flex-row items-stretch border-2 border-bd-green/20 group-hover:border-bd-green/40 transition-all duration-500 backdrop-blur-3xl focus-within:ring-4 focus-within:ring-bd-green/20">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-bd-green via-bd-red to-bd-green opacity-30" aria-hidden="true"></div>
-                  <div className="flex-grow flex items-center px-4 md:px-6 py-2">
-                    <span className="text-xl md:text-2xl mr-2 md:mr-4 opacity-40" aria-hidden="true">🔍</span>
-                    <label htmlFor="main-search" className="sr-only">বাংলাদেশ সম্পর্কে অনুসন্ধান করুন</label>
+            <p className="text-sm md:text-xl themed-text-muted mb-6 md:mb-12 max-w-3xl mx-auto font-medium font-noto opacity-70 animate-reveal-stagger">ইতিহাস, ঐতিহ্য ও সংস্কৃতি — সবকিছুই এখন আপনার হাতের মুঠোয়।</p>
+            <div className="w-full max-w-4xl mx-auto relative group animate-reveal-stagger">
+              <div className="relative themed-card p-1.5 md:p-2.5 rounded-[20px] md:rounded-[35px] shadow-2xl flex flex-row items-stretch border border-bd-green/20 focus-within:ring-4 focus-within:ring-bd-green/10 transition-all">
+                  <div className="flex-grow flex items-center px-4 py-2">
+                    <span className="text-lg opacity-30 mr-2">🔍</span>
                     <input 
-                      id="main-search"
                       ref={searchInputRef}
                       type="text" 
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                       placeholder="যেমন: সুন্দরবন..."
-                      className="flex-grow bg-transparent outline-none text-base md:text-3xl font-bold themed-text font-noto placeholder:opacity-30 min-w-0"
+                      className="flex-grow bg-transparent outline-none text-base md:text-2xl font-bold themed-text font-noto placeholder:opacity-20 min-w-0"
                     />
                   </div>
-                  <button 
-                    onClick={() => handleSearch()} 
-                    className="bg-bd-green text-white px-5 md:px-20 py-3 md:py-6 rounded-[20px] md:rounded-[50px] font-black uppercase tracking-[0.1em] md:tracking-[0.2em] hover:bg-bd-red hover:shadow-[0_0_40px_rgba(244,42,65,0.4)] transition-all duration-500 shadow-xl text-sm md:text-2xl flex items-center justify-center gap-2 md:gap-5 active:scale-95 group/btn shrink-0 outline-none focus:ring-4 focus:ring-bd-red/30"
-                  >
-                    <span>খুঁজুন</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-8 md:w-8 transition-transform group-hover/btn:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                  </button>
+                  <button onClick={() => handleSearch()} className="bg-bd-green text-white px-5 md:px-10 py-2.5 md:py-3.5 rounded-[15px] md:rounded-[28px] font-black uppercase text-xs md:text-lg hover:bg-bd-red transition-all shadow-md active:scale-95 shrink-0 outline-none">খুঁজুন</button>
               </div>
-              
-              <SearchHistory 
-                history={searchHistory} 
-                onSelect={handleSearch} 
-                onClear={clearHistory}
-                onRemoveItem={removeHistoryItem}
-              />
+              <SearchHistory history={searchHistory} onSelect={handleSearch} onClear={clearHistory} onRemoveItem={removeHistoryItem} />
+            </div>
+            
+            {/* Scroll Indicator for full-screen mobile - Reduced top margin */}
+            <div className="md:hidden mt-10 md:mt-auto pt-4 pb-4 animate-bounce opacity-30">
+               <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-bd-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7-7-7" />
+               </svg>
             </div>
           </div>
         </section>
 
-        {/* Results Section */}
-        <div ref={resultsRef} className="scroll-mt-40" aria-live="polite">
+        {/* Results */}
+        <div ref={resultsRef} className="scroll-mt-20" aria-live="polite">
           {(status !== AppStatus.IDLE || streamingText) && (
-            <section className="py-24 bg-gray-50/50 dark:bg-gray-900/10" aria-label="অনুসন্ধানের ফলাফল">
-              <div className="container mx-auto px-6 max-w-5xl">
-                {error && (
-                  <div 
-                    role="alert" 
-                    className="p-8 bg-red-50 text-red-600 rounded-[30px] mb-12 font-bold border-2 border-red-100 flex flex-col items-center gap-4 text-center"
-                  >
-                    <span className="text-3xl" aria-hidden="true">⚠️</span>
-                    <p className="text-lg md:text-xl">{error}</p>
-                    <button 
-                      onClick={() => handleSearch()} 
-                      className="mt-4 px-6 py-2 bg-red-600 text-white rounded-full text-sm font-bold hover:bg-red-700 transition-colors"
-                    >
-                      আবার চেষ্টা করুন
-                    </button>
-                  </div>
-                )}
+            <section className="py-8 bg-gray-50/20 dark:bg-gray-900/5">
+              <div className="container mx-auto px-6 max-w-4xl">
+                {error && <div className="p-4 bg-red-50 text-red-600 rounded-2xl mb-6 font-bold text-center border border-red-100">{error}</div>}
                 <InfoDisplay result={result || { text: streamingText, sources: [] }} isStreaming={status === AppStatus.LOADING} onReset={resetAll} query={query} />
               </div>
             </section>
@@ -340,241 +297,167 @@ const App: React.FC = () => {
 
         <DidYouKnow onSelect={handleSearch} />
 
-        {/* NEW: Moved Knowledge Directory Section Up */}
-        <section id="directory" className="py-20 md:py-32 bg-white dark:bg-black/20" aria-labelledby="dir-title">
+        {/* Knowledge Directory */}
+        <section id="directory" className="py-10 md:py-16 bg-white dark:bg-black/10">
           <div className="container mx-auto px-6 text-center">
-            <h2 className="text-sm font-black text-bd-red uppercase tracking-[0.5em] mb-4">নলেজ ডিরেক্টরি</h2>
-            <h3 id="dir-title" className="text-2xl md:text-7xl font-black text-bd-green font-noto mb-12 md:mb-24 leading-tight">বাংলার অফুরন্ত জ্ঞানভাণ্ডারে <br className="hidden lg:block" /> <span className="text-bd-red italic">ঐতিহ্যের</span> প্রামাণ্য ডিজিটাল সংকলন</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+            <h2 className="text-[12px] font-black text-bd-red uppercase tracking-[0.4em] mb-2">নলেজ ডিরেক্টরি</h2>
+            <h3 className="text-3xl md:text-7xl font-black font-noto mb-8 md:mb-12 leading-[1.2]">
+              <span className="text-bd-green">ঐতিহ্যের প্রামাণ্য</span> <br />
+              <span className="text-bd-red italic">ডিজিটাল</span> <span className="text-bd-green">সংকলন</span>
+            </h3>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
               {EXPLORE_CATEGORIES.map((cat) => (
-                <button 
-                  key={cat.id} 
-                  onClick={() => handleSearch(cat.query)} 
-                  className="themed-card group p-8 md:p-12 rounded-[40px] md:rounded-[50px] border border-transparent hover:border-bd-green/20 hover:shadow-2xl transition-all text-left flex flex-col items-start gap-8 md:gap-10 cursor-pointer relative overflow-hidden outline-none focus:ring-4 focus:ring-bd-green/20"
-                  aria-label={`${cat.title} ক্যাটাগরি অনুসন্ধান করুন`}
-                >
-                  <div className={`w-14 h-14 md:w-16 md:h-16 ${cat.color} rounded-2xl flex items-center justify-center text-2xl md:text-3xl shadow-xl group-hover:scale-110 transition-all text-white`} aria-hidden="true">{cat.icon}</div>
-                  <div className="relative z-10"><h4 className="text-xl md:text-2xl font-black text-bd-green font-noto mb-2 md:mb-3 group-hover:text-bd-red transition-colors">{cat.title}</h4><p className="themed-text-muted text-xs md:text-sm leading-relaxed font-medium">{cat.description}</p></div>
+                <button key={cat.id} onClick={() => handleSearch(cat.query)} className="themed-card group p-5 rounded-[25px] border border-transparent hover:border-bd-green/20 hover:shadow-xl transition-all text-left flex flex-col gap-4 outline-none focus:ring-4 focus:ring-bd-green/10">
+                  <div className={`w-10 h-10 ${cat.color} rounded-xl flex items-center justify-center text-xl shadow-md text-white group-hover:scale-110 transition-transform`}>{cat.icon}</div>
+                  <div><h4 className="text-base font-black text-bd-green font-noto mb-1 group-hover:text-bd-red transition-colors">{cat.title}</h4><p className="themed-text-muted text-[10px] opacity-60 line-clamp-2">{cat.description}</p></div>
                 </button>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="history" className="py-24 md:py-48 bg-gray-50 dark:bg-black/40 overflow-hidden" aria-labelledby="history-title">
+        {/* History */}
+        <section id="history" className="py-12 md:py-20 bg-gray-50 dark:bg-black/20 overflow-hidden">
           <div className="container mx-auto px-6">
-            <div className="flex flex-col items-center text-center mb-24 md:mb-32">
-                <h2 className="text-sm font-black text-bd-red uppercase tracking-[0.6em] mb-6">মহাকাব্যিক পথচলা</h2>
-                <h3 id="history-title" className="text-4xl md:text-8xl font-black text-bd-green font-noto leading-[1.1] tracking-tighter mb-8">বাংলার হাজার বছরের <br/><span className="text-bd-red italic">ইতিহাস</span></h3>
-                <div className="w-24 h-1 bg-bd-red/40 mb-12" aria-hidden="true"></div>
-                <p className="themed-text-muted text-xl md:text-2xl font-medium max-w-3xl font-noto opacity-70">প্রাচীন জনপদ থেকে স্বাধীন সার্বভৌম বাংলাদেশ — আমাদের ইতিহাসের প্রতিটি অধ্যায় বীরত্ব ও ত্যাগের মহিমায় উজ্জ্বল।</p>
+            <div className="flex flex-col items-center text-center mb-10 md:mb-16">
+                <h2 className="text-[12px] font-black text-bd-red uppercase tracking-[0.4em] mb-2">মহাকাব্যিক পথচলা</h2>
+                <h3 className="text-3xl md:text-7xl font-black font-noto leading-[1.2] mb-4">
+                  <span className="text-bd-green">বাংলার হাজার বছরের</span> <br />
+                  <span className="text-bd-red italic">ইতিহাস ও সংগ্রাম</span>
+                </h3>
+                <div className="w-16 h-1 bg-bd-red/30 mb-6"></div>
+                <p className="themed-text-muted text-base md:text-xl font-medium max-w-2xl font-noto opacity-70">প্রাচীন জনপদ থেকে স্বাধীন সার্বভৌম বাংলাদেশ।</p>
             </div>
-            
-            <HistoryTimeline 
-              onSelect={handleSearch} 
-              isLoading={status === AppStatus.LOADING}
-            />
+            <HistoryTimeline onSelect={handleSearch} isLoading={status === AppStatus.LOADING} />
           </div>
         </section>
 
-        <section id="heritage" className="py-24 md:py-48 bg-white dark:bg-black/20" aria-labelledby="heritage-title">
+        {/* Heritage */}
+        <section id="heritage" className="py-12 md:py-20 bg-white dark:bg-black/10">
           <div className="container mx-auto px-6">
-            <div className="flex flex-col items-center text-center mb-20 md:mb-32">
-                <h2 className="text-sm font-black text-bd-red uppercase tracking-[0.6em] mb-6">মন ও মননের প্রতিফলন</h2>
-                <h3 id="heritage-title" className="text-4xl md:text-8xl font-black text-bd-green font-noto leading-[1.1] tracking-tighter mb-8">সংস্কৃতি ও <br/><span className="text-bd-red italic">ঐতিহ্য</span></h3>
-                <div className="w-24 h-1 bg-bd-red/40 mb-12" aria-hidden="true"></div>
-                <p className="themed-text-muted text-xl md:text-2xl font-medium max-w-3xl font-noto opacity-70 text-center">সাহিত্য, সংগীত, নৃত্য আর লোকজ উপকথায় সমৃদ্ধ এক অনন্য জনপদ — যেখানে জীবনই এক উৎসব।</p>
+            <div className="flex flex-col items-center text-center mb-10 md:mb-16">
+                <h2 className="text-[12px] font-black text-bd-red uppercase tracking-[0.4em] mb-2">মন ও মননের প্রতিফলন</h2>
+                <h3 className="text-3xl md:text-7xl font-black font-noto leading-[1.2]">
+                  <span className="text-bd-green">সংস্কৃতি ও</span> <br />
+                  <span className="text-bd-red italic">বাংলার</span> <span className="text-bd-green">ঐতিহ্য</span>
+                </h3>
             </div>
-            
-            <HeritageGallery 
-              onSelect={handleSearch} 
-              isLoading={status === AppStatus.LOADING}
-            />
+            <HeritageGallery onSelect={handleSearch} isLoading={status === AppStatus.LOADING} />
           </div>
         </section>
 
-        <section id="islamic-history" className="py-24 md:py-48 bg-gray-50 dark:bg-black/40" aria-labelledby="islamic-history-title">
+        {/* Scholars */}
+        <section id="islamic-scholars" className="py-12 md:py-20 bg-gray-50 dark:bg-black/20">
           <div className="container mx-auto px-6">
-            <div className="flex flex-col items-center text-center mb-20 md:mb-32">
-                <h2 className="text-sm font-black text-bd-red uppercase tracking-[0.6em] mb-6">সভ্যতার বিবর্তন</h2>
-                <h3 id="islamic-history-title" className="text-4xl md:text-8xl font-black text-bd-green font-noto leading-[1.1] tracking-tighter mb-8">ইসলামি <br/><span className="text-bd-red italic">ইতিহাস</span></h3>
-                <div className="w-24 h-1 bg-bd-red/40 mb-12" aria-hidden="true"></div>
-                <p className="themed-text-muted text-xl md:text-2xl font-medium max-w-3xl font-noto opacity-70 text-center">বাংলার মাটিতে ইসলামের আগমন, আধ্যাত্মিক সাধকদের অবদান এবং গৌরবময় সুলতানি ও মুঘল আমলের প্রেক্ষাপট।</p>
+            <div className="flex flex-col items-center text-center mb-10 md:mb-16">
+                <h2 className="text-[12px] font-black text-bd-red uppercase tracking-[0.4em] mb-2">জ্ঞান ও প্রজ্ঞার বাতিঘর</h2>
+                <h3 className="text-3xl md:text-7xl font-black font-noto leading-[1.2] mb-4">
+                  <span className="text-bd-green">ইসলামি আলেম</span> <br />
+                  <span className="text-bd-red italic">সমাজ ও মণীষী</span>
+                </h3>
             </div>
-            
-            <IslamicHistoryGallery 
-              onSelect={handleSearch} 
-              isLoading={status === AppStatus.LOADING}
-            />
+            <IslamicScholarsGallery onSelect={handleSearch} isLoading={status === AppStatus.LOADING} />
           </div>
         </section>
 
-        <section id="islamic-scholars" className="py-24 md:py-48 bg-white dark:bg-black/20" aria-labelledby="scholars-title">
+        {/* Tourism */}
+        <section id="tourist-spots" className="py-12 md:py-20 bg-white dark:bg-black/10">
           <div className="container mx-auto px-6">
-            <div className="flex flex-col items-center text-center mb-20 md:mb-32">
-                <h2 className="text-sm font-black text-bd-red uppercase tracking-[0.6em] mb-6">জ্ঞান ও প্রজ্ঞার বাতিঘর</h2>
-                <h3 id="scholars-title" className="text-4xl md:text-8xl font-black text-bd-green font-noto leading-[1.1] tracking-tighter mb-8">ইসলামি <br/><span className="text-bd-red italic">আলেম সমাজ</span></h3>
-                <div className="w-24 h-1 bg-bd-red/40 mb-12" aria-hidden="true"></div>
-                <p className="themed-text-muted text-xl md:text-2xl font-medium max-w-3xl font-noto opacity-70 text-center">বাংলাদেশে ইসলামি শিক্ষা ও সমাজ সংস্কারে প্রথিতযশা আলেমদের অসামান্য অবদান ও জীবনকথা।</p>
+            <div className="flex flex-col items-center text-center mb-10 md:mb-16">
+                <h2 className="text-[12px] font-black text-bd-red uppercase tracking-[0.4em] mb-2">প্রাকৃতিক বিস্ময়</h2>
+                <h3 className="text-3xl md:text-7xl font-black font-noto leading-[1.2] mb-4">
+                  <span className="text-bd-red italic">সেরা</span> <span className="text-bd-green">পর্যটন</span> <br />
+                  <span className="text-bd-green">গ্যালারি ও স্পট</span>
+                </h3>
             </div>
-            
-            <IslamicScholarsGallery 
-              onSelect={handleSearch} 
-              isLoading={status === AppStatus.LOADING}
-            />
-          </div>
-        </section>
-        
-        <section id="tourist-spots" className="py-24 md:py-48 bg-gray-50 dark:bg-black/40" aria-labelledby="tourist-title">
-          <div className="container mx-auto px-6">
-            <div className="flex flex-col items-center text-center mb-20 md:mb-32">
-                <h2 className="text-sm font-black text-bd-red uppercase tracking-[0.6em] mb-6">প্রাকৃতিক ও ঐতিহাসিক বিস্ময়</h2>
-                <h3 id="tourist-title" className="text-4xl md:text-8xl font-black text-bd-green font-noto leading-[1.1] tracking-tighter mb-8">সেরা পর্যটন <br/><span className="text-bd-red italic">গ্যালারি</span></h3>
-                <div className="w-24 h-1 bg-bd-red/40 mb-12" aria-hidden="true"></div>
-                <p className="themed-text-muted text-xl md:text-2xl font-medium max-w-3xl font-noto opacity-70 text-center">বাংলার রূপের জাদুতে মুগ্ধ হতে ঘুরে আসুন আমাদের শীর্ষ পর্যটন কেন্দ্রগুলো।</p>
-            </div>
-            
-            <TourismGallery 
-              onSelect={handleSearch} 
-              isLoading={status === AppStatus.LOADING}
-            />
+            <TourismGallery onSelect={handleSearch} isLoading={status === AppStatus.LOADING} />
           </div>
         </section>
 
-        <section id="islamic-architecture" className="py-24 md:py-48 bg-white dark:bg-black/20" aria-labelledby="arch-title">
+        {/* Emergency */}
+        <section id="emergency" className="py-12 md:py-20 bg-gray-50 dark:bg-black/20">
           <div className="container mx-auto px-6">
-            <div className="flex flex-col items-center text-center mb-20 md:mb-32">
-                <h2 className="text-sm font-black text-bd-red uppercase tracking-[0.6em] mb-6">মুসলিম ঐতিহ্যের গৌরব</h2>
-                <h3 id="arch-title" className="text-4xl md:text-8xl font-black text-bd-green font-noto leading-[1.1] tracking-tighter mb-8">ইসলামিক <br/><span className="text-bd-red italic">স্থাপত্যশৈলী</span></h3>
-                <div className="w-24 h-1 bg-bd-red/40 mb-12" aria-hidden="true"></div>
-                <p className="themed-text-muted text-xl md:text-2xl font-medium max-w-3xl font-noto opacity-70 text-center">বাংলার মুসলিম সুলতান ও শাসকদের অমর কীর্তি — অনিন্দ্য সুন্দর মসজিদ ও স্থাপনার গল্প।</p>
+            <div className="flex flex-col items-center text-center mb-10 md:mb-16">
+                <h2 className="text-[12px] font-black text-bd-red uppercase tracking-[0.4em] mb-2">এক ক্লিকেই সব সেবা</h2>
+                <h3 className="text-3xl md:text-7xl font-black font-noto leading-[1.2] mb-4">
+                   <span className="text-bd-green">জাতীয় জরুরি</span> <br />
+                   <span className="text-bd-red italic">সেবা ও হটলাইন</span>
+                </h3>
             </div>
-            
-            <IslamicArchitectureGallery 
-              onSelect={handleSearch} 
-              isLoading={status === AppStatus.LOADING}
-            />
-          </div>
-        </section>
-
-        <section id="cultural-festivals" className="py-24 md:py-48 bg-gray-50 dark:bg-black/40" aria-labelledby="fest-title">
-          <div className="container mx-auto px-6">
-            <div className="flex flex-col items-center text-center mb-20 md:mb-32">
-                <h2 className="text-sm font-black text-bd-red uppercase tracking-[0.6em] mb-6">বারো মাসে তেরো পার্বণ</h2>
-                <h3 id="fest-title" className="text-4xl md:text-8xl font-black text-bd-green font-noto leading-[1.1] tracking-tighter mb-8">সাংস্কৃতিক <br/><span className="text-bd-red italic">উৎসবসমূহ</span></h3>
-                <div className="w-24 h-1 bg-bd-red/40 mb-12" aria-hidden="true"></div>
-                <p className="themed-text-muted text-xl md:text-2xl font-medium max-w-3xl font-noto opacity-70 text-center">রঙিন ও বৈচিত্র্যময় উৎসবের মিলনমেলা — বাঙালির প্রাণের উৎসবের ঐতিহ্য।</p>
-            </div>
-            
-            <FestivalsGallery 
-              onSelect={handleSearch} 
-              isLoading={status === AppStatus.LOADING}
-            />
-          </div>
-        </section>
-
-        <section id="emergency" className="py-24 md:py-48 bg-white dark:bg-black/20" aria-labelledby="emergency-title">
-          <div className="container mx-auto px-6">
-            <div className="flex flex-col items-center text-center mb-20 md:mb-32">
-                <h2 className="text-sm font-black text-bd-red uppercase tracking-[0.6em] mb-6">এক ক্লিকেই সব সেবা</h2>
-                <h3 id="emergency-title" className="text-4xl md:text-8xl font-black text-bd-green font-noto leading-[1.1] tracking-tighter mb-8">জাতীয় <br/><span className="text-bd-red italic">জরুরী সেবা</span></h3>
-                <div className="w-24 h-1 bg-bd-red/40 mb-12" aria-hidden="true"></div>
-                <p className="themed-text-muted text-xl md:text-2xl font-medium max-w-3xl font-noto opacity-70 text-center">বিপদে আপদে তাৎক্ষণিক সহায়তার জন্য বাংলাদেশের গুরুত্বপূর্ণ হেল্পলাইনসমূহ।</p>
-            </div>
-            
             <EmergencyServices />
           </div>
         </section>
 
-        <section id="faq" className="py-24 md:py-48 bg-gray-50 dark:bg-black/40" aria-labelledby="faq-title">
+        {/* FAQ */}
+        <section id="faq" className="py-12 md:py-20 bg-white dark:bg-black/10">
           <div className="container mx-auto px-6">
-            <div className="flex flex-col items-center text-center mb-20 md:mb-32">
-                <h2 className="text-sm font-black text-bd-red uppercase tracking-[0.6em] mb-6">আপনার কৌতুহল মেটাতে</h2>
-                <h3 id="faq-title" className="text-4xl md:text-8xl font-black text-bd-green font-noto leading-[1.1] tracking-tighter mb-8">সাধারণ <br/><span className="text-bd-red italic">প্রশ্ন-উত্তর</span></h3>
-                <div className="w-24 h-1 bg-bd-red/40 mb-12" aria-hidden="true"></div>
-                <p className="themed-text-muted text-xl md:text-2xl font-medium max-w-3xl font-noto opacity-70 text-center">বাংলাদেশ সম্পর্কে সচরাচর জিজ্ঞাসিত প্রশ্ন ও তাদের সঠিক উত্তরসমূহ।</p>
+            <div className="flex flex-col items-center text-center mb-10 md:mb-16">
+                <h2 className="text-[12px] font-black text-bd-red uppercase tracking-[0.4em] mb-2">আপনার কৌতুহল মেটাতে</h2>
+                <h3 className="text-3xl md:text-7xl font-black font-noto leading-[1.2] mb-4">
+                   <span className="text-bd-green">সাধারণ জিজ্ঞাসা</span> <br />
+                   <span className="text-bd-red italic">ও সঠিক উত্তর</span>
+                </h3>
             </div>
-            
             <FAQSection />
           </div>
         </section>
       </main>
 
-      <footer className="bg-white dark:bg-[#050505] border-t-2 border-gray-100 dark:border-gray-900 pt-24 pb-12" role="contentinfo">
+      <footer className="bg-white dark:bg-[#050505] border-t border-gray-100 dark:border-white/5 pt-12 pb-8" role="contentinfo">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16 mb-20">
-            {/* Column 1: Brand & Desc */}
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
-              <div className="flex items-center gap-4 mb-8 justify-center md:justify-start">
-                <div className="w-12 h-12 md:w-14 md:h-14 bg-bd-green rounded-2xl flex items-center justify-center text-white font-black text-xl md:text-2xl shadow-xl">🇧🇩</div>
-                <span className="text-3xl md:text-4xl font-black text-bd-green font-noto">দেশজ্ঞান</span>
-              </div>
-              <p className="themed-text-muted text-base md:text-lg leading-relaxed font-medium mb-8">
-                বাংলার হাজার বছরের ইতিহাস, ঐতিহ্য ও অগণিত তথ্যের প্রামাণ্য ডিজিটাল এনসাইক্লোপিডিয়া। শেকড়ের টানে প্রবাসে বা স্বদেশে বাঙালির জন্য এক সমৃদ্ধ তথ্যভাণ্ডার।
-              </p>
-              <div className="flex items-center gap-4">
-                {['fb', 'tw', 'ig', 'yt'].map(social => (
-                  <button key={social} className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-bd-green hover:bg-bd-red hover:text-white transition-all transform hover:scale-110" aria-label={social}>
-                    <span className="text-xs font-black uppercase">{social}</span>
-                  </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+            <div className="col-span-1 lg:col-span-1">
+              <button onClick={resetAll} className="flex items-center gap-2 mb-4 group outline-none">
+                <Logo size="sm" />
+                <span className="text-2xl font-black text-bd-green font-noto group-hover:text-bd-red transition-colors">দেশজ্ঞান</span>
+              </button>
+              <p className="themed-text-muted text-xs leading-relaxed opacity-70 mb-6">বাংলার সমৃদ্ধ ডিজিটাল এনসাইক্লোপিডিয়া। শেকড়ের টানে বাঙালির তথ্যভাণ্ডার। আপনার জ্ঞান তৃষ্ণা মেটাতে আমরা সদাপ্রস্তুত।</p>
+              <div className="flex gap-4">
+                {['Facebook', 'Twitter', 'YouTube'].map(social => (
+                  <button key={social} className="w-8 h-8 rounded-lg bg-bd-green/5 flex items-center justify-center text-[10px] font-black text-bd-green hover:bg-bd-green hover:text-white transition-all outline-none" title={social}>{social[0]}</button>
                 ))}
               </div>
             </div>
-
-            {/* Column 2: Quick Explore */}
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
-              <h4 className="text-bd-red font-black text-xs uppercase tracking-[0.4em] mb-10">গবেষণা বিভাগ</h4>
-              <ul className="flex flex-col gap-4 text-base font-bold themed-text-muted">
-                {['ইতিহাস ও পথচলা', 'সাংস্কৃতিক ঐতিহ্য', 'পর্যটন ও বিস্ময়', 'ইসলামিক জ্ঞানকোষ', 'ডিজিটাল বাংলাদেশ'].map(link => (
-                  <li key={link}><button className="hover:text-bd-green transition-colors">{link}</button></li>
-                ))}
+            
+            <div>
+              <h4 className="text-bd-red font-black text-xs uppercase tracking-[0.3em] mb-6">গবেষণা ও তথ্য</h4>
+              <ul className="flex flex-col gap-3 text-xs font-bold themed-text-muted opacity-80">
+                <li><button onClick={() => scrollToSection('history')} className="hover:text-bd-green transition-colors outline-none text-left">হাজার বছরের ইতিহাস</button></li>
+                <li><button onClick={() => scrollToSection('heritage')} className="hover:text-bd-green transition-colors outline-none text-left">সাংস্কৃতিক ঐতিহ্য</button></li>
+                <li><button onClick={() => scrollToSection('directory')} className="hover:text-bd-green transition-colors outline-none text-left">তথ্য ডিরেক্টরি</button></li>
+                <li><button onClick={() => scrollToSection('tourist-spots')} className="hover:text-bd-green transition-colors outline-none text-left">পর্যটন কেন্দ্র</button></li>
               </ul>
             </div>
 
-            {/* Column 3: Important Links */}
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
-              <h4 className="text-bd-red font-black text-xs uppercase tracking-[0.4em] mb-10">নাগরিক সেবা</h4>
-              <ul className="flex flex-col gap-4 text-base font-bold themed-text-muted">
-                {['জরুরী সেবা কেন্দ্র', 'সচরাচর প্রশ্নসমূহ', 'নাগরিক ফিডব্যাক', 'ব্যবহার বিধি', 'গোপনীয়তা নীতি'].map(link => (
-                  <li key={link}><button className="hover:text-bd-green transition-colors">{link}</button></li>
-                ))}
+            <div>
+              <h4 className="text-bd-red font-black text-xs uppercase tracking-[0.3em] mb-6">নাগরিক সেবা</h4>
+              <ul className="flex flex-col gap-3 text-xs font-bold themed-text-muted opacity-80">
+                <li><button onClick={() => scrollToSection('emergency')} className="hover:text-bd-green transition-colors outline-none text-left">জরুরী হটলাইন</button></li>
+                <li><button onClick={() => scrollToSection('faq')} className="hover:text-bd-green transition-colors outline-none text-left">সাধারণ জিজ্ঞাসা</button></li>
+                <li><button className="hover:text-bd-green transition-colors outline-none text-left">ব্যবহারের শর্তাবলী</button></li>
+                <li><button className="hover:text-bd-green transition-colors outline-none text-left">গোপনীয়তা নীতি</button></li>
               </ul>
             </div>
 
-            {/* Column 4: Newsletter/Connect */}
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
-              <h4 className="text-bd-red font-black text-xs uppercase tracking-[0.4em] mb-10">সংযুক্ত থাকুন</h4>
-              <p className="themed-text-muted text-sm font-medium mb-6">নতুন কোনো তথ্য সংযোজিত হলে সবার আগে জানতে সাবস্ক্রাইব করুন।</p>
-              <div className="w-full relative group">
-                 <input 
-                  type="email" 
-                  placeholder="আপনার ইমেইল..."
-                  className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl py-4 pl-6 pr-16 outline-none focus:border-bd-green transition-all font-medium text-sm"
-                 />
-                 <button className="absolute right-2 top-2 bottom-2 px-4 bg-bd-green text-white rounded-xl shadow-lg hover:bg-bd-red transition-all">
-                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                 </button>
-              </div>
-              <div className="mt-8 flex items-center gap-3 themed-text-muted">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-bd-red" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                <span className="text-xs font-bold">ঢাকা, বাংলাদেশ</span>
-              </div>
+            <div className="flex flex-col items-start">
+               <h4 className="text-bd-red font-black text-xs uppercase tracking-[0.3em] mb-6">সংযুক্ত থাকুন</h4>
+               <p className="text-[10px] themed-text-muted mb-4 opacity-60">নতুন আপডেটের জন্য আমাদের নিউজলেটার সাবসক্রাইব করুন।</p>
+               <div className="flex gap-2 w-full mb-6">
+                 <input type="email" placeholder="আপনার ইমেইল..." className="bg-gray-50 dark:bg-gray-900 border border-bd-green/10 rounded-xl p-3 text-xs w-full outline-none focus:border-bd-green transition-all" />
+                 <button className="bg-bd-green text-white px-4 rounded-xl text-xs hover:bg-bd-red transition-all shadow-md active:scale-95">✓</button>
+               </div>
+               <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="flex items-center gap-2 text-bd-green font-black uppercase text-[10px] tracking-widest hover:text-bd-red transition-colors group">
+                 উপরে ফিরে যান
+                 <span className="w-6 h-6 rounded-full border border-current flex items-center justify-center group-hover:-translate-y-1 transition-transform">↑</span>
+               </button>
             </div>
           </div>
-
-          <div className="pt-12 border-t border-gray-100 dark:border-gray-900 flex flex-col md:flex-row justify-between items-center gap-8">
-            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-              <p className="text-[10px] font-black themed-text-muted uppercase tracking-[0.5em]">
-                &copy; {new Date().getFullYear()} DESHGYAN ENCYCLOPEDIA.
-              </p>
-              <div className="h-1 w-1 bg-bd-red rounded-full hidden md:block"></div>
-              <p className="text-[10px] font-black text-bd-green uppercase tracking-[0.3em]">
-                প্রযুক্তিগত সহযোগিতায় জেমিনি এআই
-              </p>
-            </div>
-            <div className="flex items-center gap-6">
-               <span className="text-[10px] font-black themed-text-muted uppercase tracking-[0.4em] italic">বাংলার ঐতিহ্য আমাদের গর্ব</span>
-               <div className="w-8 h-8 bg-bd-red/10 rounded-lg flex items-center justify-center text-bd-red text-sm">❤️</div>
+          
+          <div className="pt-8 border-t border-gray-50 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-[9px] font-black themed-text-muted uppercase tracking-[0.2em]">© {new Date().getFullYear()} DESHGYAN ENCYCLOPEDIA. ALL RIGHTS RESERVED.</p>
+            <div className="flex items-center gap-2">
+              <span className="text-[9px] font-black themed-text-muted uppercase tracking-[0.1em] italic">বাংলার ঐতিহ্য আমাদের গর্ব ❤️</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-bd-red animate-pulse"></div>
             </div>
           </div>
         </div>

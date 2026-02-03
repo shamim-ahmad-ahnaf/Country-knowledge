@@ -27,10 +27,13 @@ const EmergencyServices: React.FC = () => {
             </p>
           </div>
           
-          {/* Subtle Call Button visual only */}
-          <div className="mt-4 w-full py-3 bg-gray-50 dark:bg-gray-800 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-bd-red group-hover:bg-bd-red group-hover:text-white transition-colors cursor-default">
+          <a 
+            href={`tel:${service.number}`}
+            className="mt-4 w-full py-3 bg-gray-50 dark:bg-gray-800 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-bd-red group-hover:bg-bd-red group-hover:text-white transition-all shadow-sm active:scale-95 inline-block"
+            aria-label={`${service.title} নম্বরে সরাসরি কল করুন`}
+          >
             সরাসরি ডায়াল করুন
-          </div>
+          </a>
         </div>
       ))}
     </div>
