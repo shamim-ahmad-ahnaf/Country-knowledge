@@ -133,8 +133,7 @@ const App: React.FC = () => {
         }
       );
     } catch (err: any) {
-      // Show the actual error message from the service
-      setError(err.message || 'তথ্য সংগ্রহে ত্রুটি হয়েছে। পুনরায় চেষ্টা করুন।');
+      setError('তথ্য সংগ্রহে ত্রুটি হয়েছে। পুনরায় চেষ্টা করুন।');
       setStatus(AppStatus.ERROR);
     }
   };
@@ -320,16 +319,9 @@ const App: React.FC = () => {
                 {error && (
                   <div 
                     role="alert" 
-                    className="p-8 bg-red-50 text-red-600 rounded-[30px] mb-12 font-bold border-2 border-red-100 flex flex-col items-center gap-4 text-center"
+                    className="p-8 bg-red-50 text-red-600 rounded-[30px] mb-12 font-bold border-2 border-red-100 flex items-center gap-4"
                   >
-                    <span className="text-3xl" aria-hidden="true">⚠️</span>
-                    <p className="text-lg md:text-xl">{error}</p>
-                    <button 
-                      onClick={() => handleSearch()} 
-                      className="mt-4 px-6 py-2 bg-red-600 text-white rounded-full text-sm font-bold hover:bg-red-700 transition-colors"
-                    >
-                      আবার চেষ্টা করুন
-                    </button>
+                    <span className="text-3xl" aria-hidden="true">⚠️</span> {error}
                   </div>
                 )}
                 <InfoDisplay result={result || { text: streamingText, sources: [] }} isStreaming={status === AppStatus.LOADING} onReset={resetAll} query={query} />

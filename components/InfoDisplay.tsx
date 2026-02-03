@@ -28,11 +28,6 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ result, isStreaming, onReset,
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsLightboxOpen(false);
-      // Focus Trap Logic (Simplified)
-      if (e.key === 'Tab' && isLightboxOpen) {
-        e.preventDefault();
-        closeBtnRef.current?.focus();
-      }
     };
     if (isLightboxOpen) {
       window.addEventListener('keydown', handleKeyDown);
@@ -41,7 +36,6 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ result, isStreaming, onReset,
     } else {
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'auto';
-      zoomInRef.current?.focus();
     }
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -125,6 +119,10 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ result, isStreaming, onReset,
     });
   };
 
+  // Only show the visual header if we are streaming OR if we actually have an image.
+  // This prevents an empty "shimmer" box from remaining after a text-only load is complete.
+  const showVisualHeader = isStreaming || !!result.imageUrl;
+
   return (
     <div 
       className="flex flex-col gap-12 animate-reveal-stagger" 
@@ -163,14 +161,11 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ result, isStreaming, onReset,
               }}
             />
           </div>
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 px-6 py-2 bg-black/40 backdrop-blur-md rounded-full text-white/60 text-xs font-black uppercase tracking-[0.3em] pointer-events-none">
-            Move mouse to pan • Click to close
-          </div>
         </div>
       )}
 
-      {/* --- Visual Header --- */}
-      {(result.imageUrl || isStreaming) && (
+      {/* --- Visual Header (Visible during streaming or if image exists) --- */}
+      {showVisualHeader && (
         <div className="relative w-full aspect-[21/9] rounded-[40px] md:rounded-[60px] overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.3)] border-4 border-white dark:border-gray-800">
           {result.imageUrl ? (
             <div 
@@ -187,22 +182,17 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ result, isStreaming, onReset,
                 className="w-full h-full object-cover dark:opacity-70 transition-transform duration-[2s] group-hover:scale-110" 
                 alt={query || 'Bangladesh Info'} 
               />
-              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                 <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center text-white text-3xl shadow-2xl scale-50 group-hover:scale-100 transition-transform duration-500">
-                   🔍
-                 </div>
-              </div>
             </div>
           ) : (
-            <div className="w-full h-full shimmer-box animate-shimmer flex items-center justify-center" aria-label="ছবি তৈরি হচ্ছে">
+            <div className="w-full h-full shimmer-box animate-shimmer flex items-center justify-center" aria-label="তথ্য লোড হচ্ছে">
                <div className="flex flex-col items-center gap-4 opacity-20">
                  <div className="w-16 h-16 border-4 border-bd-green border-t-transparent rounded-full animate-spin"></div>
-                 <span className="text-xs font-black uppercase tracking-widest">চিত্রপট তৈরি হচ্ছে...</span>
+                 <span className="text-xs font-black uppercase tracking-widest">তথ্য সংগ্রহ করা হচ্ছে...</span>
                </div>
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
-          {query && !isStreaming && (
+          {query && !isStreaming && result.imageUrl && (
             <div className="absolute bottom-10 left-10 md:bottom-16 md:left-16 text-white pointer-events-none">
                <span className="text-xs font-black uppercase tracking-[0.4em] text-bd-red mb-2 block">এনসাইক্লোপিডিয়া অনুসন্ধান</span>
                <h2 className="text-4xl md:text-7xl font-black font-noto tracking-tighter">{query}</h2>
