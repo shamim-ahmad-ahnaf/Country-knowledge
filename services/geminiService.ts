@@ -10,6 +10,7 @@ export const streamBangladeshInfo = async (
   onChunk: (text: string) => void,
   onComplete: (result: SearchResult) => void
 ) => {
+  // Always create a fresh instance to ensure the latest API key is used
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const systemInstruction = `
@@ -43,26 +44,28 @@ export const streamBangladeshInfo = async (
   `;
 
   try {
-    // Generate image in parallel for better UX
+    // Generate image in parallel using Flash Image model
     const imagePromise = ai.models.generateContent({
       model: "gemini-2.5-flash-image",
       contents: {
-        parts: [{ text: `A professional, breathtaking cinematic wide-angle photograph of ${query} in Bangladesh. High resolution, National Geographic style, historical significance.` }]
+        parts: [{ text: `A professional, breathtaking cinematic wide-angle photograph of ${query} in Bangladesh. High resolution, National Geographic style, historically accurate scenery.` }]
       },
-      config: { imageConfig: { aspectRatio: "16:9" } }
+      config: { 
+        imageConfig: { aspectRatio: "16:9" } 
+      }
     }).catch(err => {
       console.warn("Image generation failed:", err);
       return null;
     });
 
-    // Stream text content using Gemini 3 Pro for complex reasoning and search
+    // Stream text content using Gemini 3 Flash for better performance and higher rate limits
     const streamResponse = await ai.models.generateContentStream({
-      model: "gemini-3-pro-preview",
-      contents: [{ parts: [{ text: `বাংলাদেশ সম্পর্কে বিস্তারিত এনসাইক্লোপিডিয়া তথ্য দাও: ${query}` }] }],
+      model: "gemini-3-flash-preview",
+      contents: [{ parts: [{ text: `বাংলাদেশ সম্পর্কে বিস্তারিত এবং নির্ভুল এনসাইক্লোপিডিয়া তথ্য দাও: ${query}` }] }],
       config: { 
         systemInstruction,
         tools: [{ googleSearch: {} }],
-        temperature: 0.7,
+        temperature: 0.5, // Lower temperature for more factual responses
       },
     });
 
@@ -75,7 +78,7 @@ export const streamBangladeshInfo = async (
         onChunk(fullText);
       }
 
-      // Collect grounding sources
+      // Collect grounding sources from metadata if Google Search was used
       const metadata = chunk.candidates?.[0]?.groundingMetadata;
       if (metadata?.groundingChunks) {
         metadata.groundingChunks.forEach((c: any) => {
@@ -89,6 +92,10 @@ export const streamBangladeshInfo = async (
           }
         });
       }
+    }
+
+    if (!fullText) {
+      throw new Error("Model provided an empty response. Please try a different query.");
     }
 
     const imageResult = await imagePromise;
@@ -107,8 +114,12 @@ export const streamBangladeshInfo = async (
       imageUrl: generatedImageUrl
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini Service Error:", error);
+    // Re-throw meaningful error for UI consumption
+    if (error.message?.includes("429") || error.message?.includes("RESOURCE_EXHAUSTED")) {
+      throw new Error("সার্ভার কোটা শেষ হয়েছে। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।");
+    }
     throw error;
   }
 };
