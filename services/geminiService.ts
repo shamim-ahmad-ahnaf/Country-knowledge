@@ -3,7 +3,7 @@ import { SearchResult } from "../types";
 
 /**
  * Service to call our internal secure API route.
- * Handles potential HTML error responses from the server.
+ * This ensures the API key remains server-side only.
  */
 export const streamBangladeshInfo = async (
   query: string, 
@@ -19,36 +19,15 @@ export const streamBangladeshInfo = async (
       body: JSON.stringify({ query }),
     });
 
-    // Handle non-OK responses
     if (!response.ok) {
-      const contentType = response.headers.get("content-type");
-      
-      // If server returns JSON error
-      if (contentType && contentType.includes("application/json")) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "সার্ভারে সমস্যা হয়েছে।");
-      } else {
-        // If server returns HTML (like a 404 or Vercel error page)
-        if (response.status === 404) {
-          throw new Error("API রুটটি খুঁজে পাওয়া যাচ্ছে না (/api/gemini)। দয়া করে নিশ্চিত করুন যে api/ ফোল্ডারটি সঠিক জায়গায় আছে এবং Redeploy করেছেন।");
-        }
-        throw new Error(`সার্ভার থেকে অপ্রত্যাশিত রেসপন্স এসেছে (Status: ${response.status})।`);
-      }
+      const errorData = await response.json();
+      throw new Error(errorData.error || "সার্ভারে সমস্যা হয়েছে।");
     }
 
-    // Attempt to parse successful JSON
-    let data;
-    try {
-      data = await response.json();
-    } catch (e) {
-      throw new Error("সার্ভার থেকে আসা ডাটা সঠিক JSON ফরম্যাটে নেই।");
-    }
+    const data = await response.json();
     
-    if (!data || !data.text) {
-      throw new Error("সার্ভার থেকে কোনো তথ্য পাওয়া যায়নি।");
-    }
-
-    // Simulate streaming for UI compatibility
+    // Since the API route currently returns a full JSON (not streaming for simplicity/stability),
+    // we simulate a single chunk for the UI compatibility.
     onChunk(data.text);
     
     onComplete({
