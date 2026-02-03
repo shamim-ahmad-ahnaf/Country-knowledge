@@ -6,7 +6,6 @@ export const config = {
 };
 
 export default async function handler(req: any, res: any) {
-  // Handle POST requests only
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
@@ -21,7 +20,7 @@ export default async function handler(req: any, res: any) {
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
       console.error("API_KEY is missing in server environment variables.");
-      return res.status(500).json({ error: "সার্ভার কনফিগারেশনে সমস্যা: API Key পাওয়া যায়নি। ভিercel সেটিংস চেক করুন।" });
+      return res.status(500).json({ error: "সার্ভার কনফিগারেশনে সমস্যা: API Key পাওয়া যায়নি।" });
     }
 
     const ai = new GoogleGenAI({ apiKey });
@@ -54,8 +53,18 @@ export default async function handler(req: any, res: any) {
 
   } catch (error: any) {
     console.error("Gemini Server Error:", error);
+    
+    let userFriendlyMessage = "সার্ভারে একটি সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।";
+    
+    // Detect Quota/Rate Limit Errors (429)
+    if (error.message && (error.message.includes("429") || error.message.includes("quota") || error.message.includes("RESOURCE_EXHAUSTED"))) {
+      userFriendlyMessage = "দুঃখিত, বর্তমানে অনেক বেশি রিকোয়েস্ট আসছে (Free Quota Limit)। দয়া করে ১ মিনিট অপেক্ষা করে আবার চেষ্টা করুন।";
+    } else if (error.message && (error.message.includes("API_KEY_INVALID") || error.message.includes("403"))) {
+      userFriendlyMessage = "আপনার API Key টি সঠিক নয়। দয়া করে Vercel Settings চেক করুন।";
+    }
+
     return res.status(500).json({ 
-      error: `Gemini API এরর: ${error.message || "Internal Server Error"}` 
+      error: userFriendlyMessage 
     });
   }
 }
