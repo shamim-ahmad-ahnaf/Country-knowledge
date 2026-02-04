@@ -18,7 +18,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose, searchHistory 
   const [showNotification, setShowNotification] = useState(false);
 
   // Default Password
-  const ADMIN_PASSWORD = 'দেশজ্ঞান২০২৫'; 
+  const ADMIN_PASSWORD = 'shamim2001'; 
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
