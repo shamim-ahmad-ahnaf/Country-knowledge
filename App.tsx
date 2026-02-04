@@ -25,6 +25,7 @@ import IslamicScholarsGallery from './components/IslamicScholarsGallery';
 import EmergencyServices from './components/EmergencyServices';
 import FAQSection from './components/FAQSection';
 import Logo from './components/Logo';
+import AdminDashboard from './components/AdminDashboard';
 
 const App: React.FC = () => {
   const [query, setQuery] = useState('');
@@ -34,6 +35,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('theme') === 'dark' || 
@@ -56,6 +58,13 @@ const App: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', handleScroll);
+    
+    // Check for admin param in URL
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('admin') === 'true') {
+      setIsAdminOpen(true);
+    }
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -74,12 +83,12 @@ const App: React.FC = () => {
   }, [searchHistory]);
 
   useEffect(() => {
-    if (isMenuOpen) {
+    if (isMenuOpen || isAdminOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
     }
-  }, [isMenuOpen]);
+  }, [isMenuOpen, isAdminOpen]);
 
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
@@ -218,6 +227,9 @@ const App: React.FC = () => {
         </div>
       </nav>
 
+      {/* Admin Dashboard Trigger - Double Click Footer for Admin */}
+      {isAdminOpen && <AdminDashboard onClose={() => setIsAdminOpen(false)} searchHistory={searchHistory} />}
+
       {/* Mobile Menu */}
       <div id="mobile-menu" className={`fixed inset-0 z-[400] transition-opacity duration-300 ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
@@ -245,7 +257,7 @@ const App: React.FC = () => {
       </div>
 
       <main id="main-content" role="main">
-        {/* Hero Section - UPDATED: Reduced paddings for mobile to tighten space */}
+        {/* Hero Section */}
         <section id="home" className="relative min-h-screen md:min-h-[70vh] flex flex-col items-center justify-center pt-20 md:pt-32 pb-8 md:pb-12 overflow-hidden">
           <div className="hero-pattern absolute inset-0 z-0 opacity-40 dark:opacity-10" aria-hidden="true"></div>
           <div className="container mx-auto px-6 text-center z-10 flex flex-col items-center justify-center h-full">
@@ -274,7 +286,6 @@ const App: React.FC = () => {
               <SearchHistory history={searchHistory} onSelect={handleSearch} onClear={clearHistory} onRemoveItem={removeHistoryItem} />
             </div>
             
-            {/* Scroll Indicator for full-screen mobile - Reduced top margin */}
             <div className="md:hidden mt-10 md:mt-auto pt-4 pb-4 animate-bounce opacity-30">
                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-bd-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7-7-7" />
@@ -407,7 +418,10 @@ const App: React.FC = () => {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
             <div className="col-span-1 lg:col-span-1">
-              <button onClick={resetAll} className="flex items-center gap-2 mb-4 group outline-none">
+              <button 
+                onDoubleClick={() => setIsAdminOpen(true)}
+                className="flex items-center gap-2 mb-4 group outline-none"
+              >
                 <Logo size="sm" />
                 <span className="text-2xl font-black text-bd-green font-noto group-hover:text-bd-red transition-colors">দেশজ্ঞান</span>
               </button>
@@ -441,7 +455,7 @@ const App: React.FC = () => {
 
             <div className="flex flex-col items-start">
                <h4 className="text-bd-red font-black text-xs uppercase tracking-[0.3em] mb-6">সংযুক্ত থাকুন</h4>
-               <p className="text-[10px] themed-text-muted mb-4 opacity-60">নতুন আপডেটের জন্য আমাদের নিউজলেটার সাবসক্রাইব করুন।</p>
+               <p className="text-[10px] themed-text-muted mb-4 opacity-60">নতুন আপডেটের জন্য আমাদের নিউজলেটার সাবস্ক্রাইব করুন।</p>
                <div className="flex gap-2 w-full mb-6">
                  <input type="email" placeholder="আপনার ইমেইল..." className="bg-gray-50 dark:bg-gray-900 border border-bd-green/10 rounded-xl p-3 text-xs w-full outline-none focus:border-bd-green transition-all" />
                  <button className="bg-bd-green text-white px-4 rounded-xl text-xs hover:bg-bd-red transition-all shadow-md active:scale-95">✓</button>
